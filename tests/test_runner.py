@@ -8,6 +8,14 @@ class TestRunner(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_init_config(self):
+        runner = Runner()
+        runner.config = None
+        runner.init_config()
+        self.assertIsNotNone(runner.config)
+        self.assertFalse(runner.config['PERIODIC_CLI_NAME'])
+        self.assertTrue(runner.config['PERIODIC_TIME_INTERVAL'])
+
     def test_constructor(self):
         runner = Runner()
         self.assertIsNotNone(runner.config)
