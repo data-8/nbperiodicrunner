@@ -1,2 +1,2 @@
 # nbperiodicrunner
-Periodically runs cli apps for a certain time interval.
+Simple Jupyter extension to periodically runs cli apps for a certain time interval.
