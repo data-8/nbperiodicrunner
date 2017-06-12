@@ -17,10 +17,10 @@ def config_for_env(env_name):
 class Config(object):
     """General configurations"""
 
-    PERIODIC_CLI_NAME = os.environ.get('NB_PERIODIC_CLI_NAME', default='')
+    PERIODIC_CLI_NAME = str(os.environ.get('NB_PERIODIC_CLI_NAME', default=''))
 
     # in seconds
-    PERIODIC_TIME_INTERVAL = os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=1)
+    PERIODIC_TIME_INTERVAL = int(os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=1))
 
     def __getitem__(self, attr):
         """
@@ -31,21 +31,21 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    PERIODIC_CLI_NAME = os.environ.get('NB_PERIODIC_CLI_NAME', default='')
+    PERIODIC_CLI_NAME = str(os.environ.get('NB_PERIODIC_CLI_NAME', default=''))
 
     # in seconds
-    PERIODIC_TIME_INTERVAL = os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=60)
+    PERIODIC_TIME_INTERVAL = int(os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=60))
 
 
 class DevelopmentConfig(Config):
-    PERIODIC_CLI_NAME = os.environ.get('NB_PERIODIC_CLI_NAME', default='')
+    PERIODIC_CLI_NAME = str(os.environ.get('NB_PERIODIC_CLI_NAME', default=''))
 
     # in seconds
-    PERIODIC_TIME_INTERVAL = os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=1)
+    PERIODIC_TIME_INTERVAL = int(os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=1))
 
 
 class TestConfig(Config):
-    PERIODIC_CLI_NAME = os.environ.get('NB_PERIODIC_CLI_NAME', default='touch test-file.txt')
+    PERIODIC_CLI_NAME = str(os.environ.get('NB_PERIODIC_CLI_NAME', default='touch test-file.txt'))
 
     # in seconds
-    PERIODIC_TIME_INTERVAL = os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=1)
+    PERIODIC_TIME_INTERVAL = int(os.environ.get('NB_PERIODIC_TIME_INTERVAL', default=1))

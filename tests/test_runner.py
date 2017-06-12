@@ -16,6 +16,7 @@ class TestRunner(unittest.TestCase):
     condition = None
 
     def setUp(self):
+        Runner.ENV_NAME = "testing"
         self.runner = Runner()
         self.command_name = 'touch {}'.format(self.TEST_FILE_NAME)
 
@@ -33,12 +34,12 @@ class TestRunner(unittest.TestCase):
         self.runner.config = None
         self.runner._init_config()
         self.assertIsNotNone(self.runner.config)
-        self.assertFalse(self.runner.config['PERIODIC_CLI_NAME'])
+        self.assertTrue(self.runner.config['PERIODIC_CLI_NAME'])
         self.assertTrue(self.runner.config['PERIODIC_TIME_INTERVAL'])
 
     def test_constructor(self):
         self.assertIsNotNone(self.runner.config)
-        self.assertFalse(self.runner.config['PERIODIC_CLI_NAME'])
+        self.assertTrue(self.runner.config['PERIODIC_CLI_NAME'])
         self.assertTrue(self.runner.config['PERIODIC_TIME_INTERVAL'])
 
     def test_notebook_install(self):
@@ -55,7 +56,6 @@ class TestRunner(unittest.TestCase):
 
     def test_start(self):
         self.delete_test_file()
-        Runner.ENV_NAME = "testing"
         self.runner = Runner()
         self.assertEqual(self.runner.config['PERIODIC_CLI_NAME'], self.command_name)
 
