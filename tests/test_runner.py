@@ -7,8 +7,8 @@ from nbperiodicrunner.runner import Runner
 
 class TestRunner(unittest.TestCase):
 
-    BUFFER_TIME = 1     # in seconds
-    TICK_TIME = 0.5       # in seconds
+    BUFFER_TIME = 0.5     # in seconds
+    TICK_TIME = 0.2       # in seconds
     NUM_OF_LOOPS = 3
     TEST_FILE_NAME = "test-file.txt"
     runner = None
