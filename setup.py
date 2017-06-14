@@ -8,7 +8,7 @@ setuptools.setup(
     description="Simple Jupyter extension to periodically runs cli apps for a certain time interval..",
     packages=setuptools.find_packages(),
     install_requires=[
-        'notebook'
+        'notebook', 'tornado'
     ],
     package_data={'nbpuller': ['static/*']},
 )

@@ -2,6 +2,7 @@ import os
 import unittest
 import subprocess
 import time
+from threading import Thread, Event
 from nbperiodicrunner.runner import Runner
 
 
@@ -14,6 +15,8 @@ class TestRunner(unittest.TestCase):
     runner = None
     command_name = ''
     condition = None
+    thread = None
+    stop_event = None
 
     def setUp(self):
         Runner.ENV_NAME = "testing"
@@ -29,6 +32,11 @@ class TestRunner(unittest.TestCase):
         self.runner.stop()
         self.delete_test_file()
         os.environ['NB_PERIODIC_CLI_NAME'] = ''
+        self.stop_thread()
+
+    def test_notebook_install(self):
+        subprocess.check_call(['pip', 'install', '--upgrade', '.'])
+        subprocess.check_call(['jupyter', 'serverextension', 'enable', '--py', 'nbperiodicrunner'])
 
     def test_init_config(self):
         self.runner.config = None
@@ -36,23 +44,27 @@ class TestRunner(unittest.TestCase):
         self.assertIsNotNone(self.runner.config)
         self.assertTrue(self.runner.config['PERIODIC_CLI_NAME'])
         self.assertTrue(self.runner.config['PERIODIC_TIME_INTERVAL'])
+        self.assertTrue(self.runner.cli_name_list)
 
     def test_constructor(self):
         self.assertIsNotNone(self.runner.config)
         self.assertTrue(self.runner.config['PERIODIC_CLI_NAME'])
         self.assertTrue(self.runner.config['PERIODIC_TIME_INTERVAL'])
+        self.assertTrue(self.runner.cli_name_list)
 
-    def test_notebook_install(self):
-        subprocess.check_call(['pip', 'install', '--upgrade', '.'])
-        subprocess.check_call(['jupyter', 'serverextension', 'enable', '--py', 'nbperiodicrunner'])
+    def test_seonds_to_milliseconds(self):
+        list_of_seconds = [1, 5, 20, 4, 6, 9, 3.8]
+        list_of_milliseconds = []
+        for sec in list_of_seconds:
+            list_of_milliseconds.append(self.runner._seconds_to_milliseconds(sec))
 
-    def test_run_interval_command(self):
-        self.delete_test_file()
+        expected_list_of_milliseconds = [1000, 5000, 20000, 4000, 6000, 9000, 3800]
+        self.assertListEqual(list_of_milliseconds, expected_list_of_milliseconds)
 
-        def command():
-            self.runner._loop_command_on_interval(self.command_name)
-
-        self.command_runs_on_time(self.NUM_OF_LOOPS, command, self.condition, self.delete_test_file)
+    def test_init_periodic_callback(self):
+        self.runner.periodic_callback = None
+        self.runner._init_periodic_callback()
+        self.assertTrue(self.runner.periodic_callback)
 
     def test_start(self):
         self.delete_test_file()
@@ -74,8 +86,18 @@ class TestRunner(unittest.TestCase):
         if os.path.exists(self.TEST_FILE_NAME):
             subprocess.check_call(['rm', self.TEST_FILE_NAME])
 
+    def stop_thread(self):
+        if self.thread and self.stop_event:
+            self.stop_event.set()
+
+    def start_thread(self, command):
+        self.stop_event = Event()
+        self.thread = Thread(target=command)
+        self.thread.daemon = True
+        self.thread.start()
+
     def command_runs_on_time(self, num, command, condition, clean_up):
-        command()
+        self.start_thread(command)
         for _ in range(num):
             duration = self.get_time_to_meet_condition(condition)
             print("The loop took", duration, "seconds to run.")
@@ -91,6 +113,7 @@ class TestRunner(unittest.TestCase):
         # check if file is created with `touch` cli in interval time
         while not self.is_timing_out(start_time):
             time.sleep(self.TICK_TIME)
+            self.assertTrue(self.runner.is_running())
             if condition():
                 end_time = time.time()
                 break
