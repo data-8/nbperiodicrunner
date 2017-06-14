@@ -11,7 +11,7 @@ class TestPeriodicRunner(unittest.TestCase):
 
     BUFFER_TIME = 0.5     # in seconds
     TICK_TIME = 0.2       # in seconds
-    STARTUP_TIME = 5      # in seconds
+    STARTUP_TIMEOUT = 5   # in seconds
     NUM_OF_LOOPS = 3
     TEST_FILE_NAME = "test-file.txt"
     TEST_CONFIG_FILE_NAME = "nbperiodicrunner_config.py"
@@ -74,7 +74,6 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
         self.assertTrue(self.runner.cli_name_list)
 
     def test_constructor(self):
-        self.assertIsNotNone(self.runner.config)
         self.assertTrue(self.runner.periodic_time_interval)
         self.assertTrue(self.runner.periodic_cli_name)
         self.assertTrue(self.runner.cli_name_list)
@@ -94,8 +93,6 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
         self.assertTrue(self.runner.periodic_callback)
 
     def test_start(self):
-        self.delete_test_file()
-        self.runner = PeriodicRunner()
         self.assertEqual(self.runner.periodic_cli_name, self.command_name)
 
         def command():
@@ -163,7 +160,7 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
         total_startup_duration = 0
         duration = self.get_timeout_time()
 
-        while duration >= self.get_timeout_time() and total_startup_duration < self.STARTUP_TIME:
+        while duration >= self.get_timeout_time() and total_startup_duration < self.STARTUP_TIMEOUT:
             duration = self.get_time_to_meet_condition(condition)
             total_startup_duration += duration
         logger.info("Startup took {} seconds".format(total_startup_duration))
