@@ -9,8 +9,6 @@ from traitlets.config.loader import load_pyconfig_files
 
 class PeriodicRunner(Configurable):
 
-    #ENV_NAME = 'production'
-    ENV_NAME = 'development'
     CONFIG_FILE_PATH = '~/.jupyter'
     CONFIG_FILE_NAMES = ['nbperiodicrunner_config.py']
 
@@ -22,7 +20,7 @@ class PeriodicRunner(Configurable):
         """)
 
     periodic_cli_name = Unicode(u'', config=True, help="""
-        Name of the command to run
+        Name of the command for PeriodicRunner to execute
         """)
 
     def __init__(self, nbapp_config=None):
