@@ -12,8 +12,8 @@ class PeriodicRunner(Configurable):
     CONFIG_FILE_PATH = '~/.jupyter'
     CONFIG_FILE_NAMES = ['nbperiodicrunner_config.py']
 
-    periodic_callback = None
-    cli_name_list = None
+    _periodic_callback = None
+    _cli_name_list = None
 
     periodic_time_interval = Float(5, config=True, help="""
         Interval in seconds at which PeriodicRunner executes its command
@@ -35,12 +35,12 @@ class PeriodicRunner(Configurable):
         nbperiodicrunner_config = load_pyconfig_files(self.CONFIG_FILE_NAMES, self.CONFIG_FILE_PATH)
         c.merge(nbperiodicrunner_config)
         self.update_config(c)
-        self.cli_name_list = self.periodic_cli_name.split(' ')
+        self._cli_name_list = self.periodic_cli_name.split(' ')
 
 
     def start(self):
-        if self.periodic_callback:
-            self.periodic_callback.start()
+        if self._periodic_callback:
+            self._periodic_callback.start()
             IOLoop.current().start()
             logger.info('Started runner loop')
         else:
@@ -48,26 +48,26 @@ class PeriodicRunner(Configurable):
 
 
     def stop(self):
-        if self.periodic_callback:
-            self.periodic_callback.stop()
+        if self._periodic_callback:
+            self._periodic_callback.stop()
             logger.info('Stopped runner loop')
         else:
             logger.info('Did not stop loop: No periodic callback exists.')
 
 
     def is_running(self):
-        return self.periodic_callback and self.periodic_callback.is_running()
+        return self._periodic_callback and self._periodic_callback.is_running()
 
 
     def _init_periodic_callback(self):
         if self.periodic_cli_name:
             def _command_wrapper():
-                subprocess.check_call(self.cli_name_list)
+                subprocess.check_call(self._cli_name_list)
                 logger.info("Ran command: \"{}\"".format(self.periodic_cli_name))
 
             time_interval = self._seconds_to_milliseconds(self.periodic_time_interval)
 
-            self.periodic_callback = PeriodicCallback(_command_wrapper, time_interval)
+            self._periodic_callback = PeriodicCallback(_command_wrapper, time_interval)
             logger.info('Initialized periodic callback on IOLoop: {}'.format(str(IOLoop.current())))
         else:
             logger.info('Did not initialize periodic callback since no command specified.')
