@@ -5,7 +5,7 @@ from tornado.ioloop import PeriodicCallback, IOLoop
 from nbperiodicrunner.config import config_for_env
 
 
-class Runner(object):
+class PeriodicRunner(object):
 
     #ENV_NAME = 'production'
     ENV_NAME = 'development'

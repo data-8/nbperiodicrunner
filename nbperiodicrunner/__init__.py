@@ -1,4 +1,4 @@
-from nbperiodicrunner.runner import Runner
+from nbperiodicrunner.periodic_runner import PeriodicRunner
 
 def _jupyter_server_extension_paths():
     return [{
@@ -7,5 +7,5 @@ def _jupyter_server_extension_paths():
 
 
 def load_jupyter_server_extension(nbapp):
-    runner = Runner()
+    runner = PeriodicRunner()
     runner.start()

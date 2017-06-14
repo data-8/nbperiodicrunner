@@ -3,10 +3,10 @@ import unittest
 import subprocess
 import time
 from threading import Thread, Event
-from nbperiodicrunner.runner import Runner
+from nbperiodicrunner.periodic_runner import PeriodicRunner
 
 
-class TestRunner(unittest.TestCase):
+class TestPeriodicRunner(unittest.TestCase):
 
     BUFFER_TIME = 0.5     # in seconds
     TICK_TIME = 0.2       # in seconds
@@ -19,8 +19,8 @@ class TestRunner(unittest.TestCase):
     stop_event = None
 
     def setUp(self):
-        Runner.ENV_NAME = "testing"
-        self.runner = Runner()
+        PeriodicRunner.ENV_NAME = "testing"
+        self.runner = PeriodicRunner()
         self.command_name = 'touch {}'.format(self.TEST_FILE_NAME)
 
         def condition():
@@ -68,7 +68,7 @@ class TestRunner(unittest.TestCase):
 
     def test_start(self):
         self.delete_test_file()
-        self.runner = Runner()
+        self.runner = PeriodicRunner()
         self.assertEqual(self.runner.config['PERIODIC_CLI_NAME'], self.command_name)
 
         def command():
