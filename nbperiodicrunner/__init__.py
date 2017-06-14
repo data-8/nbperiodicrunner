@@ -7,5 +7,5 @@ def _jupyter_server_extension_paths():
 
 
 def load_jupyter_server_extension(nbapp):
-    runner = PeriodicRunner()
+    runner = PeriodicRunner(nbapp.config)
     runner.start()
