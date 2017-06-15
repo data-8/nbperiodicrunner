@@ -68,15 +68,22 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
             self._delete_test_file)
 
     def test_init_config(self):
+        self._delete_test_config_file()
+        self._runner = PeriodicRunner()
+        self.assertEqual(self._runner.periodic_time_interval, 5)
+        self.assertEqual(self._runner.periodic_cli_name, u'')
+
+        self._create_test_config_file()
         self._runner._init_config()
-        self.assertTrue(self._runner.periodic_time_interval)
-        self.assertTrue(self._runner.periodic_cli_name)
+        self.assertEqual(self._runner.periodic_time_interval, 1)
+        self.assertEqual(self._runner.periodic_cli_name, self._command_name)
         self.assertTrue(self._runner._cli_name_list)
 
     def test_constructor(self):
-        self.assertTrue(self._runner.periodic_time_interval)
-        self.assertTrue(self._runner.periodic_cli_name)
-        self.assertTrue(self._runner._cli_name_list)
+        self.assertEqual(self._runner.periodic_time_interval, 1)
+        self.assertEqual(self._runner.periodic_cli_name, self._command_name)
+        self.assertEqual(self._runner._cli_name_list, self._command_name.split(' '))
+        self.assertTrue(self._runner._periodic_callback)
 
     def test_seonds_to_milliseconds(self):
         list_of_seconds = [1, 5, 20, 4, 6, 9, 3.8]
