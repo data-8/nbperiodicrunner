@@ -77,7 +77,7 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
         self._runner._init_config()
         self.assertEqual(self._runner.periodic_time_interval, 1)
         self.assertEqual(self._runner.periodic_cli_name, self._command_name)
-        self.assertTrue(self._runner._cli_name_list)
+        self.assertEqual(self._runner._cli_name_list, self._command_name.split(' '))
 
     def test_constructor(self):
         self.assertEqual(self._runner.periodic_time_interval, 1)
