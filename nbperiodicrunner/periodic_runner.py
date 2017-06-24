@@ -1,10 +1,16 @@
 import subprocess
 import time
-from .util import logger
+import logging
 from tornado.ioloop import PeriodicCallback, IOLoop
 from traitlets.config.configurable import Configurable, Config
 from traitlets import Float, Unicode
 from traitlets.config.loader import load_pyconfig_files
+
+
+logging.basicConfig(
+    format='[%(asctime)s] %(levelname)s -- %(message)s',
+    level=logging.DEBUG)
+logger = logging.getLogger('app')
 
 
 class PeriodicRunner(Configurable):

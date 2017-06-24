@@ -1,13 +1,11 @@
 import os
-import unittest
 import subprocess
 import time
 from threading import Thread
-from nbperiodicrunner.periodic_runner import PeriodicRunner
-from nbperiodicrunner.util import logger
+from nbperiodicrunner.periodic_runner import PeriodicRunner, logger
 
 
-class TestPeriodicRunner(unittest.TestCase):
+class TestPeriodicRunner(object):
 
     BUFFER_TIME = 0.5     # in seconds
     TICK_TIME = 0.2       # in seconds
@@ -44,6 +42,7 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
         self._kill_notebook()
 
     def test_notebook_install(self):
+        self.setUp()
         subprocess.check_call(['pip3', 'install', '--upgrade', '.'])
         subprocess.check_call(['jupyter', 'serverextension', 'enable', '--py', 'nbperiodicrunner'])
 
@@ -66,47 +65,58 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
             run_notebook,
             self._condition,
             self._delete_test_file)
+        self.tearDown()
 
     def test_init_config(self):
+        self.setUp()
         self._delete_test_config_file()
         self._runner = PeriodicRunner()
-        self.assertEqual(self._runner.periodic_time_interval, 5)
-        self.assertEqual(self._runner.periodic_cli_name, u'')
+        assert self._runner.periodic_time_interval == 5
+        assert self._runner.periodic_cli_name == u''
 
         self._create_test_config_file()
         self._runner._init_config()
-        self.assertEqual(self._runner.periodic_time_interval, 1)
-        self.assertEqual(self._runner.periodic_cli_name, self._command_name)
-        self.assertEqual(self._runner._cli_name_list, self._command_name.split(' '))
+        assert self._runner.periodic_time_interval == 1
+        assert self._runner.periodic_cli_name == self._command_name
+        assert self._runner._cli_name_list == self._command_name.split(' ')
+        self.tearDown()
 
     def test_constructor(self):
-        self.assertEqual(self._runner.periodic_time_interval, 1)
-        self.assertEqual(self._runner.periodic_cli_name, self._command_name)
-        self.assertEqual(self._runner._cli_name_list, self._command_name.split(' '))
-        self.assertTrue(self._runner._periodic_callback)
+        self.setUp()
+        assert self._runner.periodic_time_interval == 1
+        assert self._runner.periodic_cli_name == self._command_name
+        assert self._runner._cli_name_list == self._command_name.split(' ')
+        assert self._runner._periodic_callback
+        self.tearDown()
 
     def test_seonds_to_milliseconds(self):
+        self.setUp()
         list_of_seconds = [1, 5, 20, 4, 6, 9, 3.8]
         list_of_milliseconds = []
         for sec in list_of_seconds:
             list_of_milliseconds.append(self._runner._seconds_to_milliseconds(sec))
 
         expected_list_of_milliseconds = [1000, 5000, 20000, 4000, 6000, 9000, 3800]
-        self.assertListEqual(list_of_milliseconds, expected_list_of_milliseconds)
+        assert set(list_of_milliseconds) == set(expected_list_of_milliseconds)
+        self.tearDown()
 
     def test_init_periodic_callback(self):
+        self.setUp()
         self._runner._periodic_callback = None
         self._runner._init_periodic_callback()
-        self.assertTrue(self._runner._periodic_callback)
+        assert self._runner._periodic_callback
+        self.tearDown()
 
     def test_start(self):
-        self.assertEqual(self._runner.periodic_cli_name, self._command_name)
+        self.setUp()
+        assert self._runner.periodic_cli_name == self._command_name
 
         def command():
             self._runner.start()
 
         self._command_runs_on_time(self.NUM_OF_LOOPS, command, self._condition, self._delete_test_file)
-        self.assertTrue(self._runner.is_running())
+        assert self._runner.is_running()
+        self.tearDown()
 
     def _is_within_buffer_time(self, duration):
         return abs(duration - (self._runner.periodic_time_interval)) < self.BUFFER_TIME
@@ -145,7 +155,7 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
             clean_up()
             duration = self._get_time_to_meet_condition(condition)
             logger.info("The loop took {} seconds to run.".format(duration))
-            self.assertTrue(self._is_within_buffer_time(duration))
+            assert self._is_within_buffer_time(duration)
 
     def _get_time_to_meet_condition(self, condition):
         start_time = time.time()
