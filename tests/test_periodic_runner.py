@@ -7,7 +7,7 @@ from nbperiodicrunner.periodic_runner import PeriodicRunner, logger
 
 class TestPeriodicRunner(object):
 
-    BUFFER_TIME = 0.5     # in seconds
+    BUFFER_TIME = 0.8     # in seconds
     TICK_TIME = 0.2       # in seconds
     STARTUP_TIMEOUT = 5   # in seconds
     NUM_OF_LOOPS = 3
@@ -119,7 +119,7 @@ c.PeriodicRunner.periodic_cli_name = 'touch test-file.txt'"""
         self.tearDown()
 
     def _is_within_buffer_time(self, duration):
-        return abs(duration - (self._runner.periodic_time_interval)) < self.BUFFER_TIME
+        return abs(duration - self._runner.periodic_time_interval) < self.BUFFER_TIME
 
     def _is_timing_out(self, start_time):
         return time.time() - start_time > self._runner.periodic_time_interval + self.BUFFER_TIME

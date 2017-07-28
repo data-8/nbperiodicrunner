@@ -1,5 +1,4 @@
 import subprocess
-import time
 import logging
 from tornado.ioloop import PeriodicCallback, IOLoop
 from traitlets.config.configurable import Configurable, Config
@@ -33,7 +32,6 @@ class PeriodicRunner(Configurable):
         self._init_config(nbapp_config)
         self._init_periodic_callback()
 
-
     def _init_config(self, nbapp_config=None):
         c = Config()
         if nbapp_config:
@@ -43,7 +41,6 @@ class PeriodicRunner(Configurable):
         self.update_config(c)
         self._cli_name_list = self.periodic_cli_name.split(' ')
 
-
     def start(self):
         if self._periodic_callback:
             self._periodic_callback.start()
@@ -52,7 +49,6 @@ class PeriodicRunner(Configurable):
         else:
             logger.info('Did not start loop: No periodic callback exists.')
 
-
     def stop(self):
         if self._periodic_callback:
             self._periodic_callback.stop()
@@ -60,10 +56,8 @@ class PeriodicRunner(Configurable):
         else:
             logger.info('Did not stop loop: No periodic callback exists.')
 
-
     def is_running(self):
         return self._periodic_callback and self._periodic_callback.is_running()
-
 
     def _init_periodic_callback(self):
         if self.periodic_cli_name:
@@ -77,7 +71,6 @@ class PeriodicRunner(Configurable):
             logger.info('Initialized periodic callback on IOLoop: {}'.format(str(IOLoop.current())))
         else:
             logger.info('Did not initialize periodic callback since no command specified.')
-
 
     def _seconds_to_milliseconds(self, seconds):
         return seconds * 1000
